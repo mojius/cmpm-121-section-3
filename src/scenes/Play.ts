@@ -18,10 +18,12 @@ export default class Play extends Phaser.Scene {
   constructor() {
     super("play");
   }
-
-  preload() {
+  loadShips() {
     this.load.image("starfield", starfieldUrl);
     this.load.image("enemyShip", enemyShipUrl);
+  }
+  preload() {
+    this.loadShips();
   }
 
   #addKey(
@@ -30,11 +32,14 @@ export default class Play extends Phaser.Scene {
     return this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes[name]);
   }
 
-  create() {
+  createKeys() {
     this.fire = this.#addKey("F");
     this.left = this.#addKey("LEFT");
     this.right = this.#addKey("RIGHT");
+  }
 
+  create() {
+    this.createKeys();
     this.starfield = this.add
       .tileSprite(
         0,
@@ -47,9 +52,15 @@ export default class Play extends Phaser.Scene {
 
     this.spinner = this.add.rectangle(100, 400, 50, 50, 0xff5900);
     this.ship01 = this.add.sprite(400, 60, "enemyShip");
+    this.ship01.setScale(4, 4);
+    this.ship01.texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
   }
 
   update(_timeMs: number, delta: number) {
+    this.updateInput(delta);
+  }
+
+  updateInput(delta: number) {
     this.starfield!.tilePositionX -= 4;
 
     if (this.left!.isDown) {
