@@ -1,6 +1,7 @@
 import * as Phaser from "phaser";
 
 import starfieldUrl from "/assets/starfield.png";
+import enemyShipUrl from "/assets/enemyShip.png";
 
 export default class Play extends Phaser.Scene {
   fire?: Phaser.Input.Keyboard.Key;
@@ -9,8 +10,10 @@ export default class Play extends Phaser.Scene {
 
   starfield?: Phaser.GameObjects.TileSprite;
   spinner?: Phaser.GameObjects.Shape;
+  ship01?: Phaser.GameObjects.Sprite;
+  ship02?: Phaser.GameObjects.Sprite;
 
-  rotationSpeed = Phaser.Math.PI2 / 1000; // radians per millisecond
+  moveSpeed = 2 / 10;
 
   constructor() {
     super("play");
@@ -18,6 +21,7 @@ export default class Play extends Phaser.Scene {
 
   preload() {
     this.load.image("starfield", starfieldUrl);
+    this.load.image("enemyShip", enemyShipUrl);
   }
 
   #addKey(
@@ -41,17 +45,18 @@ export default class Play extends Phaser.Scene {
       )
       .setOrigin(0, 0);
 
-    this.spinner = this.add.rectangle(100, 100, 50, 50, 0xff0000);
+    this.spinner = this.add.rectangle(100, 400, 50, 50, 0xff5900);
+    this.ship01 = this.add.sprite(400, 60, "enemyShip");
   }
 
   update(_timeMs: number, delta: number) {
     this.starfield!.tilePositionX -= 4;
 
     if (this.left!.isDown) {
-      this.spinner!.rotation -= delta * this.rotationSpeed;
+      this.spinner!.x -= delta * this.moveSpeed;
     }
     if (this.right!.isDown) {
-      this.spinner!.rotation += delta * this.rotationSpeed;
+      this.spinner!.x += delta * this.moveSpeed;
     }
 
     if (this.fire!.isDown) {
